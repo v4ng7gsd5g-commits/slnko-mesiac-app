@@ -1,0 +1,10 @@
+workflows:
+  default-workflow:
+    name: Default Workflow
+    artifacts:
+      - build/ios/iphoneos/*.app
+    scripts:
+      - name: Build iOS
+        script: | 
+          flutter pub get
+          flutter build ios --release --no-codesign
