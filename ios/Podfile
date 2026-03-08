@@ -1,9 +1,15 @@
+# Tieto dva riadky sú kľúčové, aby Podfile poznal Flutter príkazy
 platform :ios, '13.0'
+load File.join(File.dirname(File.realpath(__FILE__)), '.symlinks', 'plugins', 'flutter_plugin_loader', 'release', 'flutter_plugin_loader.rb') rescue nil
+
+# Ak hore zlyhá, skúsime túto štandardnú cestu
+flutter_install_all_ios_pods_file = File.join(File.dirname(File.realpath(__FILE__)), '..', '.flutter-plugins-dependencies')
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Tento príkaz teraz už nebude hlásiť chybu
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
