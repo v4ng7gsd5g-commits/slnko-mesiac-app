@@ -8,10 +8,9 @@
     <string>Aplikácia potrebuje prístup k senzorom pohybu na sledovanie polohy Mesiaca.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Aplikácia potrebuje prístup k polohe pre presný výpočet pozície Mesiaca.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Aplikácia potrebuje prístup ku kamere pre AR zobrazenie Mesiaca.</string>
-    <key>NSMotionUsageDescription</key>
-    <string>Aplikácia potrebuje prístup k senzorom na sledovanie pohybu telefónu.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Aplikácia vyžaduje prístup k mikrofónu pre správne fungovanie knižnice kamery.</string>
+    
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
@@ -36,27 +35,6 @@
     <string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
-    <key>UIApplicationSceneManifest</key>
-    <dict>
-        <key>UIApplicationSupportsMultipleScenes</key>
-        <false/>
-        <key>UISceneConfigurations</key>
-        <dict>
-            <key>UIWindowSceneSessionRoleApplication</key>
-            <array>
-                <dict>
-                    <key>UISceneClassName</key>
-                    <string>UIWindowScene</string>
-                    <key>UISceneConfigurationName</key>
-                    <string>flutter</string>
-                    <key>UISceneDelegateClassName</key>
-                    <string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-                    <key>UISceneStoryboardFile</key>
-                    <string>Main</string>
-                </dict>
-            </array>
-        </dict>
-    </dict>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
     <key>UILaunchStoryboardName</key>
@@ -66,15 +44,6 @@
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 </dict>
 </plist>
