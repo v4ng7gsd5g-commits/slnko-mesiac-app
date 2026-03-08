@@ -4,14 +4,14 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 15
     scripts:
-      - name: Build iOS
+      - name: Build for Simulator
         script: | 
           flutter pub get
-          # Spustíme build a ignorujeme chybu podpisu
-          flutter build ios --release --no-codesign || true
+          # Simulator build nepotrebuje "Development Team" a vzdy vyrobi subory
+          flutter build ios --simulator --debug
           
-          # VYHĽADÁVANIE: Nájdeme kdekoľvek skrytý Runner.app a skopírujeme ho k sebe
-          mkdir -p $FCI_BUILD_DIR/build/ios/iphoneos
-          find build/ios -name "Runner.app" -exec cp -R {} $FCI_BUILD_DIR/build/ios/iphoneos/ \; 2>/dev/null || true
+          # Presunieme vysledok tam, kde ho Codemagic uvidí ako Artifact
+          mkdir -p build/ios/iphoneos
+          cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
     artifacts:
       - build/ios/iphoneos/*.app
