@@ -7,10 +7,10 @@ workflows:
       - name: Build for Simulator
         script: | 
           flutter pub get
-          # Flutter si sám zavolá pod install, ak je Podfile v poriadku
+          # Vynútime vygenerovanie nového iOS prostredia
           flutter build ios --simulator --debug
           
-          # Presun výsledku pre stiahnutie
+          # Presun výsledku
           mkdir -p build/ios/iphoneos
           cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
      
