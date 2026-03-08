@@ -3,13 +3,16 @@ import 'package:camera/camera.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:apsl_sun_calc/apsl_sun_calc.dart';
 
-// Globálna premenná pre zoznam kamier
-late List<CameraDescription> _cameras;
+// Globálna premenná pre zoznam kamier - inicializujeme ju ako prázdny zoznam
+List<CameraDescription> _cameras = [];
 
 Future<void> main() async {
-  // Inicializácia Flutteru a kamier pred spustením appky
-  WidgetsFlutterBinding.ensureInitialized();
-  _cameras = await availableCameras();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    _cameras = await availableCameras();
+  } catch (e) {
+    debugPrint("Chyba pri inicializácii kamier: $e");
+  }
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: SunToMoonApp(),
@@ -28,16 +31,35 @@ class _SunToMoonAppState extends State<SunToMoonApp> {
   bool isMoonVisible = false;
   double moonX = 0;
   double moonY = 0;
+  String errorMessage = "";
 
   @override
   void initState() {
     super.initState();
-    // Použijeme zadnú kameru (index 0)
-    controller = CameraController(_cameras[0], ResolutionPreset.high);
-    controller!.initialize().then((_) {
-      if (!mounted) return;
-      setState(() {});
-    });
+    _initializeCamera();
+  }
+
+  // Bezpečná inicializácia kamery
+  Future<void> _initializeCamera() async {
+    if (_cameras.isEmpty) {
+      setState(() => errorMessage = "Nenašli sa žiadne kamery.");
+      return;
+    }
+
+    controller = CameraController(
+      _cameras[0], 
+      ResolutionPreset.high,
+      enableAudio: false, // Vypnutie audia často predchádza pádom
+    );
+
+    try {
+      await controller!.initialize();
+      if (mounted) setState(() {});
+    } catch (e) {
+      if (mounted) {
+        setState(() => errorMessage = "Chyba kamery: $e");
+      }
+    }
   }
 
   @override
@@ -46,54 +68,64 @@ class _SunToMoonAppState extends State<SunToMoonApp> {
     super.dispose();
   }
 
-  // Funkcia na "výmenu" slnka za mesiac
   Future<void> swapSunForMoon() async {
-    // 1. Získaj povolenie a GPS polohu
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        setState(() => errorMessage = "Povoľte GPS v nastaveniach.");
+        return;
+      }
 
-    Position pos = await Geolocator.getCurrentPosition();
-    
-    // 2. Vypočítaj polohu slnka (vráti azimut a výšku)
-    var sunPos = SunCalc.getSunPosition(DateTime.now(), pos.latitude, pos.longitude);
-
-    // 3. Logika umiestnenia na obrazovku 
-    // Poznámka: Pre úplnú presnosť by sme potrebovali kompas (senzor orientácie)
-    // Pre túto verziu umiestnime mesiac do stredu, kde predpokladáme slnko
-    setState(() {
-      moonX = MediaQuery.of(context).size.width / 2;
-      moonY = MediaQuery.of(context).size.height / 3;
-      isMoonVisible = true;
-    });
+      Position pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low
+      );
+      
+      // Výpočet (zatiaľ len orientačný pre stred obrazovky)
+      setState(() {
+        moonX = MediaQuery.of(context).size.width / 2;
+        moonY = MediaQuery.of(context).size.height / 3;
+        isMoonVisible = true;
+      });
+    } catch (e) {
+      debugPrint("Chyba GPS: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Ak nastala chyba, zobrazíme ju namiesto pádu
+    if (errorMessage.isNotEmpty) {
+      return Scaffold(body: Center(child: Text(errorMessage, textAlign: TextAlign.center)));
+    }
+
+    // Ak sa kamera ešte načítava
     if (controller == null || !controller!.value.isInitialized) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       body: Stack(
         children: [
-          // Živý náhľad z kamery cez celú obrazovku
           Positioned.fill(
             child: CameraPreview(controller!),
           ),
 
-          // Zobrazíme obrázok mesiaca, ak bol aktivovaný
           if (isMoonVisible)
             Positioned(
-              left: moonX - 75, // Centrovanie (polovica šírky obrázka)
+              left: moonX - 75,
               top: moonY - 75,
               child: Image.network(
                 'https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg',
                 width: 150,
                 height: 150,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.nightlight_round, size: 100, color: Colors.yellow),
               ),
             ),
 
-          // Ovládacie tlačidlo
           Positioned(
             bottom: 50,
             left: 50,
