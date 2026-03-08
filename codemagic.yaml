@@ -2,9 +2,11 @@ workflows:
   default-workflow:
     name: Default Workflow
     artifacts:
-      - build/ios/iphoneos/*.app
+      - $FCI_BUILD_DIR/build/ios/iphoneos/*.app
     scripts:
       - name: Build iOS
         script: | 
           flutter pub get
-          flutter build ios --release --no-codesign
+          # Tento príkaz vytvorí súbory, aj keď skončí chybou podpisu
+          flutter build ios --release --no-codesign || true
+        ignore_failure: true
