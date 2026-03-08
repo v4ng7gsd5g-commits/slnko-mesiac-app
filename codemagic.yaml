@@ -7,7 +7,7 @@ workflows:
         script: | 
           flutter pub get
           flutter clean
-          # Debug simulator build je jediný, ktorý nepotrebuje Apple Team ID
-          flutter build ios --debug --simulator --no-codesign
+          # Tento príkaz povie Flutteru, aby ignoroval Team ID a len vygeneroval kód
+          flutter build ios --debug --no-codesign --extra-gen-snapshot-options=--no-codesign
     artifacts:
-      - build/ios/iphonesimulator/Runner.app
+      - build/ios/iphoneos/Runner.app
