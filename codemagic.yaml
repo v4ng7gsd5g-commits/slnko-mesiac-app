@@ -4,12 +4,10 @@ workflows:
     instance_type: mac_mini_m2
     scripts:
       - name: Build for iOS Device
-        scripts:
-      - name: Build for iOS Device
         script: | 
           flutter pub get
           flutter build ios --release --no-codesign
 
-    # TOTO DOPLŇ SEM ÚPLNE NA KONIEC:
+    # TENTO RIADOK DOPLŇ SEM (Zarovnaj ho presne pod 'scripts'):
     artifacts:
       - build/ios/iphoneos/Runner.app
