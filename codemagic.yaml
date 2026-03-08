@@ -7,7 +7,5 @@ workflows:
         script: | 
           flutter pub get
           flutter build ios --release --no-codesign
-
-    # TENTO RIADOK DOPLŇ SEM (Zarovnaj ho presne pod 'scripts'):
     artifacts:
       - build/ios/iphoneos/Runner.app
