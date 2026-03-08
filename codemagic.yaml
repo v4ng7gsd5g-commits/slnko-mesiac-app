@@ -7,15 +7,13 @@ workflows:
       - name: Build for Simulator
         script: | 
           flutter pub get
-          # Prejdeme do ios priečinka a vynútime aktualizáciu podov
           cd ios
+          # Tieto dva príkazy vynútia prepojenie kamery
+          rm -rf Pods
+          rm -f Podfile.lock
           pod install --repo-update
           cd ..
-          
-          # Build pre simulator
           flutter build ios --simulator --debug
-          
-          # Presunieme výsledok pre Artifacts
           mkdir -p build/ios/iphoneos
           cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
     artifacts:
