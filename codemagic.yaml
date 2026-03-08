@@ -7,12 +7,9 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Prepnutie na ostrý build pre iPhone (ARM procesor)
+          # Ostrý build pre reálny iPhone procesor
           flutter build ios --release --no-codesign
           
-          # Príprava pre Artifacts
-          mkdir -p build/ios/iphoneos
-          # Pri --release builde je Runner.app v iphoneos priečinku
-     
     artifacts:
+      # TOTO JE ZMENA: Smerujeme tam, kde flutter build ios ukladá výsledok
       - build/ios/iphoneos/*.app
