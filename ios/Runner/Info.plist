@@ -3,6 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>NSCameraUsageDescription</key>
+    <string>Aplikácia potrebuje prístup ku kamere pre zobrazenie Mesiaca v AR.</string>
+    <key>NSMotionUsageDescription</key>
+    <string>Aplikácia potrebuje prístup k senzorom pohybu na sledovanie polohy Mesiaca.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Aplikácia potrebuje prístup k polohe pre presný výpočet pozície Mesiaca.</string>
+    <key>NSCameraUsageDescription</key>
     <string>Aplikácia potrebuje prístup ku kamere pre AR zobrazenie Mesiaca.</string>
     <key>NSMotionUsageDescription</key>
     <string>Aplikácia potrebuje prístup k senzorom na sledovanie pohybu telefónu.</string>

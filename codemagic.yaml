@@ -7,12 +7,12 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Prepnutie na build pre reálny iPhone bez certifikátov
+          # Prepnutie na ostrý build pre iPhone (ARM procesor)
           flutter build ios --release --no-codesign
           
-          # Vytvoríme priečinok, ktorý Codemagic očakáva pre Artifacts
+          # Príprava pre Artifacts
           mkdir -p build/ios/iphoneos
-          # Runner.app sa pri tomto type buildu už nachádza v správnom priečinku
+          # Pri --release builde je Runner.app v iphoneos priečinku
      
     artifacts:
       - build/ios/iphoneos/*.app
