@@ -7,10 +7,10 @@ workflows:
       - name: Build for Simulator
         script: | 
           flutter pub get
-          # Simulator build nepotrebuje "Development Team" a vzdy vyrobi subory
+          # Simulator build nepotrebuje certifikáty a vždy vyrobí súbory
           flutter build ios --simulator --debug
           
-          # Presunieme vysledok tam, kde ho Codemagic uvidí ako Artifact
+          # Presunieme výsledok tam, kde ho Codemagic uvidí ako Artifact
           mkdir -p build/ios/iphoneos
           cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
     artifacts:
