@@ -1,17 +1,15 @@
-workflows:
-  default-workflow:
-    name: Default Workflow
-    instance_type: mac_mini_m2
-    max_build_duration: 15
-    scripts:
+scripts:
       - name: Build for Simulator
         script: | 
           flutter pub get
-          # Simulator build nepotrebuje certifikáty a vždy vyrobí súbory
+          # Prejdeme do ios priečinka a vynútime aktualizáciu podov
+          cd ios
+          pod install --repo-update
+          cd ..
+          
+          # Build pre simulator
           flutter build ios --simulator --debug
           
-          # Presunieme výsledok tam, kde ho Codemagic uvidí ako Artifact
+          # Presunieme výsledok pre Artifacts
           mkdir -p build/ios/iphoneos
           cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
-    artifacts:
-      - build/ios/iphoneos/*.app

@@ -1,60 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:motion_sensors/motion_sensors.dart';
-import 'dart:math' as math;
 
-// Globálna premenná pre kamery
+// Globálna premenná pre zoznam dostupných kamier
 late List<CameraDescription> _cameras;
 
 Future<void> main() async {
+  // Musíme zabezpečiť inicializáciu Fluttera pred prístupom ku kamere
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Získame zoznam kamier v zariadení
   _cameras = await availableCameras();
+  
   runApp(const SunToMoonApp());
 }
 
-// TOTO TI CHÝBALO - Definícia hlavnej triedy appky
-class SunToMoonApp extends StatefulWidget {
+class SunToMoonApp extends StatelessWidget {
   const SunToMoonApp({super.key});
 
   @override
-  State<SunToMoonApp> createState() => _SunToMoonAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'AR Mesiac',
+      home: const MoonScreen(),
+    );
+  }
 }
 
-class _SunToMoonAppState extends State<SunToMoonApp> {
-  // TOTO TI CHÝBALO - Premenná pre kameru
+class MoonScreen extends StatefulWidget {
+  const MoonScreen({super.key});
+
+  @override
+  State<MoonScreen> createState() => _MoonScreenState();
+}
+
+class _MoonScreenState extends State<MoonScreen> {
   CameraController? controller;
-
-  // Senzory
-  double _azimuth = 0; // Smer (kompas)
-  double _pitch = 0;   // Sklon (hore/dole)
-  
-  // Výpočet fázy mesiaca
-  String getMoonPhaseUrl() {
-    return "https://upload.wikimedia.org/wikipedia/commons/2/20/Moon_Illumination_67%25.png";
-  }
-
-  // TOTO TI CHÝBALO - Metóda na zapnutie kamery
-  void _initializeCamera() {
-    if (_cameras.isEmpty) return;
-    controller = CameraController(_cameras[0], ResolutionPreset.max);
-    controller!.initialize().then((_) {
-      if (!mounted) return;
-      setState(() {});
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera(); // Teraz už Xcode túto metódu nájde
+    _initializeCamera();
+  }
+
+  // Táto metóda rieši chybu "_initializeCamera isn't defined", ktorú vypísal build
+  void _initializeCamera() {
+    if (_cameras.isEmpty) return;
     
-    // Sledovanie pohybu telefónu
-    motionSensors.absoluteOrientation.listen((AbsoluteOrientationEvent event) {
-      setState(() {
-        _azimuth = event.yaw;   // Otáčanie okolo vlastnej osi
-        _pitch = event.pitch;   // Náklon vpred/vzad
-      });
+    controller = CameraController(_cameras[0], ResolutionPreset.max);
+    controller!.initialize().then((_) {
+      if (!mounted) return;
+      setState(() {}); // Prekreslí obrazovku po načítaní kamery
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        print("Chyba kamery: ${e.description}");
+      }
     });
   }
 
@@ -66,45 +66,46 @@ class _SunToMoonAppState extends State<SunToMoonApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Základná kontrola kamery, aby appka nespadla
+    // Ak sa kamera ešte načítava, zobrazíme krúžok
     if (controller == null || !controller!.value.isInitialized) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
-
-    // Výpočet pozície Mesiaca na obrazovke podľa senzorov
-    double screenX = MediaQuery.of(context).size.width / 2 + (math.tan(_azimuth) * 500);
-    double screenY = MediaQuery.of(context).size.height / 2 + (math.tan(_pitch) * 500);
 
     return Scaffold(
       body: Stack(
         children: [
+          // Pozadie z kamery (vypĺňa celú obrazovku)
           Positioned.fill(child: CameraPreview(controller!)),
-
-          // REALISTICKÝ MESIAC
-          Positioned(
-            left: screenX - 25, 
-            top: screenY - 25,
-            child: Opacity(
-              opacity: 0.9,
-              child: Image.network(
-                getMoonPhaseUrl(),
-                width: 50, 
-                height: 50,
-              ),
-            ),
-          ),
           
-          // Informačný text
-          Positioned(
-            bottom: 50,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                color: Colors.black54,
-                child: const Text('Hľadaj Mesiac pohybom telefónu', style: TextStyle(color: Colors.white)),
-              ),
+          // Vrstva s "AR" Mesiacom v strede
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  '🌕', 
+                  style: TextStyle(fontSize: 120),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'MESIAC V AR',
+                    style: TextStyle(
+                      color: Colors.white, 
+                      fontSize: 22, 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
