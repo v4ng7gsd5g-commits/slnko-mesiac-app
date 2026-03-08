@@ -9,11 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: 0.11.0+1
-  geolocator: 13.0.1
-  apsl_sun_calc: 0.0.4
-  motion_sensors: ^0.1.0  # Toto je tá kľúčová zmena z terminálu
-  cupertino_icons: 1.0.6
+  camera: ^0.11.0+1
+  geolocator: ^13.0.1
+  apsl_sun_calc: ^0.0.4  # Návrat k stabilnej verzii
+  motion_sensors: ^0.1.0 # Oprava podľa tvojho terminálu
+  cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
