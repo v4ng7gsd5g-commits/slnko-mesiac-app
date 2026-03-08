@@ -2,13 +2,10 @@ workflows:
   default-workflow:
     name: Default Workflow
     instance_type: mac_mini_m2
-    max_build_duration: 15
     scripts:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Vytvorí verziu pre procesor iPhonu
           flutter build ios --release --no-codesign
     artifacts:
-      # Táto zmena nájde aplikáciu kdekoľvek v build priečinku
-      - build/ios/iphoneos/**/Runner.app
+      - build/ios/iphoneos/Runner.app
