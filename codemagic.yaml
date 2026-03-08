@@ -6,12 +6,17 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Nastavenie premenných prostredia, ktoré Xcode prečíta pred buildom
-          export CODE_SIGNING_ALLOWED=NO
-          export CODE_SIGNING_REQUIRED=NO
-          export CODE_SIGN_IDENTITY=""
+          # 1. Vygenerujeme súbory potrebné pre iOS
+          flutter build ios --release --no-codesign
           
-          # Build IPA archívu bez extra parametrov, ktoré by mohli miasť Flutter
-          flutter build ipa --release --no-codesign --build-number=1 --build-name=1.0.0
+          # 2. Vynútime build priamo cez Xcode nástroj s vypnutým podpisovaním
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/Runner.app
