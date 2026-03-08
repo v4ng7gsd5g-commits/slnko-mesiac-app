@@ -10,10 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
   camera: ^0.11.0+1
+  # PRIDAJ TOTO:
   geolocator: ^13.0.1
-  apsl_sun_calc: ^0.0.4
-  motion_sensors: ^0.1.0  # TOTO JE KLÚČ (podľa tvojho obrázku 8193bf)
+  apsl_sun_calc: ^0.0.4 # Na výpočet polohy Mesiaca
+  motion_sensors: ^0.1.0
   cupertino_icons: ^1.0.8
+  path_provider: ^2.1.2 # Na uloženie fotky
+  share_plus: ^10.1.2 # Na zdieľanie fotky
   
 dev_dependencies:
   flutter_test:
