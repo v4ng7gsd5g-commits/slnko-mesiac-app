@@ -1,19 +1,18 @@
 name: moja_prva_appka
-description: "A new Flutter project."
+description: "AR aplikacia na vymenu slnka za mesiac."
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-
-  camera: ^0.11.0 # Základná kamera (oveľa stabilnejšia)
+  camera: ^0.11.0+1
   geolocator: ^13.0.1
-  apsl_sun_calc: ^0.0.3
+  apsl_sun_calc: ^1.0.0
+  motion_sensors: ^0.5.1
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
@@ -23,8 +22,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Ak budeš neskôr pridávať vlastné obrázky (mesiaca/slnka), 
-  # odkomentuješ sekciu assets nižšie:
-  # assets:
-  #   - assets/images/

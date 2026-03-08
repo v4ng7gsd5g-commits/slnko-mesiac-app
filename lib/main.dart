@@ -1,146 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:apsl_sun_calc/apsl_sun_calc.dart';
+import 'package:motion_sensors/motion_sensors.dart';
+import 'dart:math' as math;
 
-// Globálna premenná pre zoznam kamier - inicializujeme ju ako prázdny zoznam
-List<CameraDescription> _cameras = [];
-
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    _cameras = await availableCameras();
-  } catch (e) {
-    debugPrint("Chyba pri inicializácii kamier: $e");
-  }
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SunToMoonApp(),
-  ));
-}
-
-class SunToMoonApp extends StatefulWidget {
-  const SunToMoonApp({super.key});
-
-  @override
-  State<SunToMoonApp> createState() => _SunToMoonAppState();
-}
+// ... (ponechaj globálne premenné a main funkciu z minula)
 
 class _SunToMoonAppState extends State<SunToMoonApp> {
-  CameraController? controller;
-  bool isMoonVisible = false;
-  double moonX = 0;
-  double moonY = 0;
-  String errorMessage = "";
+  // Senzory
+  double _azimuth = 0; // Smer (kompas)
+  double _pitch = 0;   // Sklon (hore/dole)
+  
+  // Výpočet fázy mesiaca (veľmi zjednodušene pre demo)
+  String getMoonPhaseUrl() {
+    // V reálnej appke by sme použili knižnicu na presný výpočet fázy
+    // Teraz použijeme PNG s priehľadným pozadím pre realizmus
+    return "https://upload.wikimedia.org/wikipedia/commons/2/20/Moon_Illumination_67%25.png";
+  }
 
   @override
   void initState() {
     super.initState();
     _initializeCamera();
-  }
-
-  // Bezpečná inicializácia kamery
-  Future<void> _initializeCamera() async {
-    if (_cameras.isEmpty) {
-      setState(() => errorMessage = "Nenašli sa žiadne kamery.");
-      return;
-    }
-
-    controller = CameraController(
-      _cameras[0], 
-      ResolutionPreset.high,
-      enableAudio: false, // Vypnutie audia často predchádza pádom
-    );
-
-    try {
-      await controller!.initialize();
-      if (mounted) setState(() {});
-    } catch (e) {
-      if (mounted) {
-        setState(() => errorMessage = "Chyba kamery: $e");
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
-
-  Future<void> swapSunForMoon() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      
-      if (permission == LocationPermission.deniedForever) {
-        setState(() => errorMessage = "Povoľte GPS v nastaveniach.");
-        return;
-      }
-
-      Position pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low
-      );
-      
-      // Výpočet (zatiaľ len orientačný pre stred obrazovky)
+    
+    // Sledovanie pohybu telefónu
+    motionSensors.absoluteOrientation.listen((AbsoluteOrientationEvent event) {
       setState(() {
-        moonX = MediaQuery.of(context).size.width / 2;
-        moonY = MediaQuery.of(context).size.height / 3;
-        isMoonVisible = true;
+        _azimuth = event.yaw;   // Otáčanie okolo vlastnej osi
+        _pitch = event.pitch;   // Náklon vpred/vzad
       });
-    } catch (e) {
-      debugPrint("Chyba GPS: $e");
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Ak nastala chyba, zobrazíme ju namiesto pádu
-    if (errorMessage.isNotEmpty) {
-      return Scaffold(body: Center(child: Text(errorMessage, textAlign: TextAlign.center)));
-    }
+    // ... (základná kontrola kamery)
 
-    // Ak sa kamera ešte načítava
-    if (controller == null || !controller!.value.isInitialized) {
-      return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator()));
-    }
+    // Výpočet pozície Mesiaca na obrazovke podľa senzorov
+    // 0.05 je mierka citlivosti, aby sa Mesiac hýbal prirodzene
+    double screenX = MediaQuery.of(context).size.width / 2 + (math.tan(_azimuth) * 500);
+    double screenY = MediaQuery.of(context).size.height / 2 + (math.tan(_pitch) * 500);
 
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(
-            child: CameraPreview(controller!),
-          ),
+          Positioned.fill(child: CameraPreview(controller!)),
 
-          if (isMoonVisible)
-            Positioned(
-              left: moonX - 75,
-              top: moonY - 75,
-              child: Image.network(
-                'https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg',
-                width: 150,
-                height: 150,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.nightlight_round, size: 100, color: Colors.yellow),
-              ),
-            ),
-
+          // REALISTICKÝ MESIAC
           Positioned(
-            bottom: 50,
-            left: 50,
-            right: 50,
-            child: ElevatedButton.icon(
-              onPressed: swapSunForMoon,
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text("ZAMEŇ SLNKO ZA MESIAC"),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
-                backgroundColor: Colors.white.withOpacity(0.8),
-                foregroundColor: Colors.black,
+            left: screenX - 25, // Malá realistická veľkosť (50px)
+            top: screenY - 25,
+            child: Opacity(
+              opacity: 0.9,
+              child: Image.network(
+                getMoonPhaseUrl(),
+                width: 50, // Realistická veľkosť na oblohe
+                height: 50,
               ),
             ),
           ),
+          
+          // ... (tlačidlo)
         ],
       ),
     );
