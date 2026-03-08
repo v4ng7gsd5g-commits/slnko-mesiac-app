@@ -7,7 +7,7 @@ workflows:
         script: | 
           flutter pub get
           flutter clean
-          # Staviame pre simulátor v režime debug (obchádza Team ID aj Release obmedzenia)
+          # Debug simulator build je jediný, ktorý nepotrebuje Apple Team ID
           flutter build ios --debug --simulator --no-codesign
     artifacts:
       - build/ios/iphonesimulator/Runner.app

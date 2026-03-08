@@ -68,11 +68,11 @@ class _MoonARScreenState extends State<MoonARScreen> {
   }
 
   void _initializeSensors() {
-    // OPRAVENÝ RIADOK 72: Používame .orientation namiesto .relativeOrientation
+    // Používame priamo yaw a pitch, ktoré OrientationEvent obsahuje
     _sensorsSubscription = motionSensors.orientation.listen((event) {
       setState(() {
-        _deviceYaw = event.x; // Yaw
-        _devicePitch = event.y; // Pitch
+        _deviceYaw = event.yaw;   // Oprava z event.x
+        _devicePitch = event.pitch; // Oprava z event.y
       });
     });
   }
