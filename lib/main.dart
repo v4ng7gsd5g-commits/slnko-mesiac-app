@@ -100,4 +100,36 @@ class _MoonARScreenState extends State<MoonARScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_cameraController == null || !_cameraController!.value.isInitialized || _currentPosition
+    if (_cameraController == null || !_cameraController!.value.isInitialized || _currentPosition == null) {
+      return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator(color: Colors.white)));
+    }
+
+    final size = MediaQuery.of(context).size;
+    double moonX = (size.width / 2) + ((_azimuth - _deviceYaw) * 800);
+    double moonY = (size.height / 2) - ((_elevation - _devicePitch) * 800);
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(child: CameraPreview(_cameraController!)),
+          Positioned(
+            left: moonX - 60,
+            top: moonY - 60,
+            child: const Text('🌕', style: TextStyle(fontSize: 120)),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt, color: Colors.white, size: 60),
+                onPressed: _takePicture,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

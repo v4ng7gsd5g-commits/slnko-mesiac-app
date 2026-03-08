@@ -6,7 +6,13 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Táto úprava povie Xcode, aby neriešil tím pri kompilácii
-          flutter build ios --release --no-codesign --build-number=1 --build-name=1.0.0
+          # TENTO BLOK ODSTRÁNI POŽIADAVKU NA TÍM A PROFILY
+          sed -i '' 's/DEVELOPMENT_TEAM = [^;]*;//g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = [^;]*;//g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
+          
+          # Samotný build bez podpisu, ktorý prejde v cloude
+          # Samotný build bez podpisu
+          flutter build ios --release --no-codesign --build-number=1 --build-name=1.0.0 --extra-gen-snapshot-options=--no-codesign
     artifacts:
       - build/ios/iphoneos/Runner.app
