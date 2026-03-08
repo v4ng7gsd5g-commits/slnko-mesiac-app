@@ -1,20 +1,24 @@
-# Tieto dva riadky sú kľúčové, aby Podfile poznal Flutter príkazy
+# Základné nastavenie pre Flutter iOS
 platform :ios, '13.0'
-load File.join(File.dirname(File.realpath(__FILE__)), '.symlinks', 'plugins', 'flutter_plugin_loader', 'release', 'flutter_plugin_loader.rb') rescue nil
 
-# Ak hore zlyhá, skúsime túto štandardnú cestu
-flutter_install_all_ios_pods_file = File.join(File.dirname(File.realpath(__FILE__)), '..', '.flutter-plugins-dependencies')
+# Načítanie Flutter skriptov z relatívnej cesty, ktorá funguje všade
+import_path = File.expand_path(File.join('..', '..', '..', 'packages', 'flutter_tools', 'bin', 'xcode_backend.sh'), __FILE__)
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Tento príkaz teraz už nebude hlásiť chybu
+  # Toto automaticky nájde a nainštaluje všetky pluginy (kameru, senzory)
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    # Oprava pre novšie verzie Xcode v cloude
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
   end
 end

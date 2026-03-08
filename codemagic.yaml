@@ -1,20 +1,10 @@
-workflows:
-  default-workflow:
-    name: Default Workflow
-    instance_type: mac_mini_m2
-    max_build_duration: 15
-    scripts:
+scripts:
       - name: Build for Simulator
         script: | 
           flutter pub get
-          cd ios
-          # Tieto dva príkazy vynútia prepojenie kamery
-          rm -rf Pods
-          rm -f Podfile.lock
-          pod install --repo-update
-          cd ..
+          # Flutter si sám zavolá pod install, ak je Podfile v poriadku
           flutter build ios --simulator --debug
+          
+          # Presun výsledku pre stiahnutie
           mkdir -p build/ios/iphoneos
           cp -R build/ios/iphonesimulator/Runner.app build/ios/iphoneos/
-    artifacts:
-      - build/ios/iphoneos/*.app
