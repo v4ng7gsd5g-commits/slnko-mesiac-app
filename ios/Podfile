@@ -1,5 +1,6 @@
 platform :ios, '13.0'
 
+# Dynamické nájdenie Flutter skriptov bez pevných ciest
 load File.join(File.dirname(__FILE__), 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
@@ -13,6 +14,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
+      # Vynútenie verzie pre úplne všetky súčasti
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
   end
