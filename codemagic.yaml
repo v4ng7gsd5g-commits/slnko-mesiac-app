@@ -6,10 +6,8 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # 1. Vyčistíme projekt
           flutter clean
-          # 2. Postavíme aplikáciu pre simulátor (nevyžaduje Development Team)
-          flutter build ios --release --simulator --no-codesign
+          # Staviame pre simulátor v režime debug (obchádza Team ID aj Release obmedzenia)
+          flutter build ios --debug --simulator --no-codesign
     artifacts:
-      - build/ios/iphoneos/Runner.app
       - build/ios/iphonesimulator/Runner.app
