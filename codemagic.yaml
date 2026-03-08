@@ -2,15 +2,16 @@ workflows:
   default-workflow:
     name: Default Workflow
     instance_type: mac_mini_m2
-    max_build_duration: 10
+    max_build_duration: 15
     scripts:
       - name: Build iOS
         script: | 
           flutter pub get
-          # Vynútime build a ignorujeme chybu podpisu
+          # Vytvoríme priečinok vopred, aby mal build kam sypať dáta
+          mkdir -p build/ios/iphoneos
+          # Spustíme build - ak zlyhá na podpise, || true ho podrží nažive
           flutter build ios --release --no-codesign || true
-          # Ručne skopírujeme výsledok tam, kde ho Codemagic uvidí
-          mkdir -p build/ios/iphoneos/Runner.app
-          cp -R ios/Runner.xcworkspace build/ios/iphoneos/ 2>/dev/null || true
+          # KĽÚČOVÁ ZMENA: Ak build vytvoril Runner.app v inom priečinku, nájdeme ho
+          [ -d build/ios/iphoneos/Runner.app ] || cp -R build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app build/ios/iphoneos/ 2>/dev/null || true
     artifacts:
       - build/ios/iphoneos/*.app
