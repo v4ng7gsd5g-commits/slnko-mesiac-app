@@ -7,9 +7,8 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Ostrý build pre reálny iPhone procesor
           flutter build ios --release --no-codesign
-          
+    
     artifacts:
-      # TOTO JE ZMENA: Smerujeme tam, kde flutter build ios ukladá výsledok
+      # TOTO JE KĽÚČOVÁ ZMENA: Smerujeme na release build priečinok
       - build/ios/iphoneos/*.app
