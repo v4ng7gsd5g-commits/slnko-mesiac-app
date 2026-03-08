@@ -7,10 +7,19 @@ workflows:
         script: | 
           flutter pub get
           flutter clean
-          # Tento príkaz natvrdo prepíše požiadavky Xcode počas kompilácie
-          flutter build ios --release --no-codesign \
-            --extra-front-end-options=--no-track-widget-creation \
-            --extra-gen-snapshot-options=--no-codesign \
-            --build-inputs="CODE_SIGNING_ALLOWED=NO,CODE_SIGNING_REQUIRED=NO,CODE_SIGN_IDENTITY='',DEVELOPMENT_TEAM=''"
+          
+          # 1. Pripravíme Flutter súbory (toto vytvorí potrebné frameworky)
+          flutter build ios --release --no-codesign
+          
+          # 2. Zavoláme priamo Xcode kompilátor s vynúteným ignorovaním podpisu
+          # Toto je kľúčový krok, ktorý obíde požiadavku na Development Team
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
     artifacts:
       - build/ios/iphoneos/Runner.app
