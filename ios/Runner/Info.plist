@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Appka potrebuje kameru na zobrazenie AR mesiaca.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Appka potrebuje GPS na výpočet polohy slnka.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Appka potrebuje GPS na výpočet polohy slnka.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
