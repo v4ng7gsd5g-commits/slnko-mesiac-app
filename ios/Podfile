@@ -1,20 +1,6 @@
 platform :ios, '13.0'
 
-# Dynamické načítanie Flutteru bez pevne zadanej cesty
-def flutter_root
-  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-  unless File.exist?(generated_xcode_build_settings_path)
-    raise "#{generated_xcode_build_settings_path} not found. If you're on Windows, make sure you ran flutter pub get."
-  end
-
-  File.foreach(generated_xcode_build_settings_path) do |line|
-    matches = line.match(/\AFLUTTER_ROOT=(.*)\z/)
-    return matches[1] if matches
-  end
-  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}."
-end
-
-load File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
+load File.join(File.dirname(__FILE__), 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
   use_frameworks!
