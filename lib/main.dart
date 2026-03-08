@@ -54,7 +54,7 @@ class _MoonARScreenState extends State<MoonARScreen> {
 
     _currentPosition = await Geolocator.getCurrentPosition();
     
-    // OPRAVA: Prístup k mape pomocou ['kľúča']
+    // Prístup k mape pomocou ['kľúča'] podľa tvojho logu
     final moonPos = SunCalc.getMoonPosition(
       DateTime.now(),
       _currentPosition!.latitude,
@@ -68,8 +68,8 @@ class _MoonARScreenState extends State<MoonARScreen> {
   }
 
   void _initializeSensors() {
-    // OPRAVA: Odstránenie neexistujúceho setteru a oprava typu eventu
-    _sensorsSubscription = motionSensors.relativeOrientation.listen((event) {
+    // OPRAVENÝ RIADOK 72: Používame .orientation namiesto .relativeOrientation
+    _sensorsSubscription = motionSensors.orientation.listen((event) {
       setState(() {
         _deviceYaw = event.x; // Yaw
         _devicePitch = event.y; // Pitch
@@ -105,18 +105,25 @@ class _MoonARScreenState extends State<MoonARScreen> {
     }
 
     final size = MediaQuery.of(context).size;
+    
+    // Výpočet pozície Mesiaca na obrazovke
     double moonX = (size.width / 2) + ((_azimuth - _deviceYaw) * 800);
     double moonY = (size.height / 2) - ((_elevation - _devicePitch) * 800);
 
     return Scaffold(
       body: Stack(
         children: [
+          // Pozadie kamery
           Positioned.fill(child: CameraPreview(_cameraController!)),
+          
+          // AR Mesiac
           Positioned(
             left: moonX - 60,
             top: moonY - 60,
             child: const Text('🌕', style: TextStyle(fontSize: 120)),
           ),
+          
+          // Tlačidlo fotoaparátu
           Positioned(
             bottom: 40,
             left: 0,
