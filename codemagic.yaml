@@ -7,11 +7,11 @@ workflows:
       - name: Build iOS
         script: | 
           flutter pub get
-          # Vytvoríme priečinok vopred, aby mal build kam sypať dáta
-          mkdir -p build/ios/iphoneos
-          # Spustíme build - ak zlyhá na podpise, || true ho podrží nažive
+          # Spustíme build a ignorujeme chybu podpisu
           flutter build ios --release --no-codesign || true
-          # KĽÚČOVÁ ZMENA: Ak build vytvoril Runner.app v inom priečinku, nájdeme ho
-          [ -d build/ios/iphoneos/Runner.app ] || cp -R build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app build/ios/iphoneos/ 2>/dev/null || true
+          
+          # VYHĽADÁVANIE: Nájdeme kdekoľvek skrytý Runner.app a skopírujeme ho k sebe
+          mkdir -p $FCI_BUILD_DIR/build/ios/iphoneos
+          find build/ios -name "Runner.app" -exec cp -R {} $FCI_BUILD_DIR/build/ios/iphoneos/ \; 2>/dev/null || true
     artifacts:
       - build/ios/iphoneos/*.app
