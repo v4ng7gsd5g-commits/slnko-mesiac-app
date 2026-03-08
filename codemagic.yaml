@@ -5,7 +5,9 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Tento príkaz zakáže Xcode hľadať tím a profily
-          flutter build ios --release --no-codesign --extra-gen-snapshot-options=--no-codesign --build-number=1 --build-name=1.0.0 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          # 1. Postavíme iOS bez podpisu
+          flutter build ios --release --no-codesign
+          # 2. Manuálne povieme Xcode, aby ignoroval podpisovanie pri balení
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
     artifacts:
       - build/ios/iphoneos/*.app
