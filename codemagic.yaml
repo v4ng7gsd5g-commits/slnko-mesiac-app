@@ -6,12 +6,12 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # Vynútime nastavenia priamo do Xcode prostredia
+          # 1. Nastavíme globálne pravidlá pre Xcode, aby nepýtal podpis
           export CODE_SIGNING_ALLOWED=NO
           export CODE_SIGNING_REQUIRED=NO
           export CODE_SIGN_IDENTITY=""
-          
-          # Build ipa s potlačením kontroly tímu
-          flutter build ipa --release --no-codesign --build-inputs="CODE_SIGNING_ALLOWED=NO"
+
+          # 2. Samotný build IPA bez akýchkoľvek extra parametrov, ktoré by hádzali chybu
+          flutter build ipa --release --no-codesign --build-number=1 --build-name=1.0.0
     artifacts:
       - build/ios/ipa/*.ipa
