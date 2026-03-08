@@ -7,8 +7,10 @@ workflows:
         script: | 
           flutter pub get
           flutter clean
-          # Tento príkaz vytvorí Release verziu, ktorú môžeš spustiť z plochy, 
-          # ale s vypnutým podpisovaním, aby Codemagic nehlásil chybu Team ID.
-          flutter build ios --release --no-codesign --extra-gen-snapshot-options=--no-codesign
+          # Tento príkaz natvrdo prepíše požiadavky Xcode počas kompilácie
+          flutter build ios --release --no-codesign \
+            --extra-front-end-options=--no-track-widget-creation \
+            --extra-gen-snapshot-options=--no-codesign \
+            --build-inputs="CODE_SIGNING_ALLOWED=NO,CODE_SIGNING_REQUIRED=NO,CODE_SIGN_IDENTITY='',DEVELOPMENT_TEAM=''"
     artifacts:
       - build/ios/iphoneos/Runner.app
