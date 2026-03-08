@@ -6,15 +6,10 @@ workflows:
       - name: Build for iOS Device
         script: | 
           flutter pub get
-          # 1. Vyčistíme projekt od starých nastavení
+          # 1. Vyčistíme projekt
           flutter clean
-          
-          # 2. Zakážeme Xcode spúšťať overovacie skripty počas buildu
-          export FORCED_CODE_SIGN_IDENTITY=""
-          export CODE_SIGNING_ALLOWED=NO
-          export CODE_SIGNING_REQUIRED=NO
-          
-          # 3. Postavíme iOS balíček tak, aby ignoroval chyby skriptov fázy buildu
-          flutter build ios --release --no-codesign --build-number=1 --build-name=1.0.0
+          # 2. Postavíme aplikáciu pre simulátor (nevyžaduje Development Team)
+          flutter build ios --release --simulator --no-codesign
     artifacts:
       - build/ios/iphoneos/Runner.app
+      - build/ios/iphonesimulator/Runner.app
