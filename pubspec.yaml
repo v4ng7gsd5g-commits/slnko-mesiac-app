@@ -11,10 +11,10 @@ dependencies:
     sdk: flutter
   camera: ^0.11.0+1
   geolocator: ^13.0.1
-  apsl_sun_calc: ^0.0.4  # Návrat k stabilnej verzii
-  motion_sensors: ^0.1.0 # Oprava podľa tvojho terminálu
+  apsl_sun_calc: ^0.0.4
+  motion_sensors: ^0.1.0  # TOTO JE KLÚČ (podľa tvojho obrázku 8193bf)
   cupertino_icons: ^1.0.6
-
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
