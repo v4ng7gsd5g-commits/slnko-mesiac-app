@@ -106,9 +106,9 @@ class _MoonARScreenState extends State<MoonARScreen> {
 
     final size = MediaQuery.of(context).size;
     
-    // Výpočet pozície Mesiaca na obrazovke
-    double moonX = (size.width / 2) + ((_azimuth - _deviceYaw) * 200);
-    double moonY = (size.height / 2) - ((_elevation - _devicePitch) * 200);
+    // Pridaním offsetu môžeme Mesiac manuálne "posunúť", ak vieme, že senzor klame
+    double moonX = (size.width / 2) + ((_azimuth - _deviceYaw) * 500); 
+    double moonY = (size.height / 2) - ((_elevation - _devicePitch) * 500);
 
     return Scaffold(
       body: Stack(
